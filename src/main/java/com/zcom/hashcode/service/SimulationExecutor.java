@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.zcom.hashcode.domain.Car;
@@ -51,17 +52,33 @@ public class SimulationExecutor {
 				.sorted(Comparator.<Integer>naturalOrder().reversed())
 				.findFirst()
 				.get();
-		System.out.println(highestNumberOfPassingCars);
 	}
 
 	public void resolve() {
-		
 		intersections.forEach(intersection -> {
-					intersection.getInputStreets().stream()
-							.filter(this::hasTraffic)
-							.forEach(inputStreet -> intersection.getTrafficLights().add(new TrafficLight(inputStreet, 1)));
+			List<Street> interStreets = intersection.getInputStreets().stream()
+					.filter(this::hasTraffic)
+					.map(this.streetsByName::get)
+					.sorted(Comparator.comparingInt(a -> a.getNumberOfPassingCars().get()))
+					.collect(Collectors.toList());
+			if (interStreets.size() > 0) {
+				int min = interStreets.get(0).getNumberOfPassingCars().get();
+				int max = interStreets.get(interStreets.size() - 1).getNumberOfPassingCars().get();
+
+				Street smallest = interStreets.stream().min(Comparator.comparingInt(Street::getLength)).get();
+				float maxDuration = smallest.getLength() * 1f / interStreets.size() * 1f;
+
+				interStreets.forEach(inputStreet ->
+						intersection.getTrafficLights().add(new TrafficLight(inputStreet.getName(), getDuration(min, max, maxDuration, inputStreet.getNumberOfPassingCars().get()))));
+			}
 		});
-		
+	}
+
+	private int getDuration(int minCars, int maxCars, float maxDuration, int cars) {
+		float normalCars = ((float) cars - minCars) / ((float) maxCars - minCars);
+		float normalDuration = maxDuration - 1f;
+		float duration = normalDuration * normalCars + 1f;
+		return Math.max(1, (int) duration);
 	}
 
 	private boolean hasTraffic(String streetName) {

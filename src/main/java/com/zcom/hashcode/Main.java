@@ -18,7 +18,7 @@ public class Main {
 	}
 	
 	private static void processFile(String name) {
-		final String inputResourceName = "C:/Users/kimsh/hashcode_workspace/hashcode2021/src/main/resources/" + name + ".txt";
+		final String inputResourceName = "F:/Documentos/hashcode2021/src/main/resources/" + name + ".txt";
 		final String outputFileName = name + ".out";
 		final ParsedContent parsedContent = new FileReader()
 				.parseInputFile(new File(inputResourceName));

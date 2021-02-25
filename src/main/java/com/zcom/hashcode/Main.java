@@ -2,23 +2,34 @@ package com.zcom.hashcode;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.List;
 
+import com.zcom.hashcode.domain.ParsedContent;
 import com.zcom.hashcode.files.FileReader;
 import com.zcom.hashcode.files.HashCodeFileWriter;
-import com.zcom.hashcode.photo.Photo;
-import com.zcom.hashcode.photo.Slideshow;
+import com.zcom.hashcode.service.SimulationExecutor;
 
 public class Main {
 
 	public static void main(String[] args) throws URISyntaxException {
-		final String inputResourceName = args[0];
-		final String outputFileName = args[1];
-		final Set<Photo> photos = new FileReader().parseInputFile(new File(Main.class.getResource(inputResourceName).toURI()));
+		List<String> filesToProcess = Arrays.asList("a", "b", "c", "d", "e", "f");
+		filesToProcess.forEach(Main::processFile);
+	}
+	
+	private static void processFile(String name) {
+		final String inputResourceName = "C:/Users/kimsh/hashcode_workspace/hashcode2021/src/main/resources/" + name + ".txt";
+		final String outputFileName = name + ".out";
+		final ParsedContent parsedContent = new FileReader()
+				.parseInputFile(new File(inputResourceName));
 		
-		final Slideshow slideshow = new SlideshowResolver().resolveSlideshow(photos);
-		
-		new HashCodeFileWriter().writeToOutputFile(outputFileName, slideshow);
+		new SimulationExecutor(
+				parsedContent.getDuration(),
+				parsedContent.getIntersections(),
+				parsedContent.getStreetsByName(),
+				parsedContent.getCars(),
+				parsedContent.getPointsForCompletedCar()).resolve();
+		new HashCodeFileWriter().writeToOutputFile(parsedContent.getIntersections(), outputFileName);
 	}
 	
 }

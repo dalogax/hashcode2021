@@ -108,14 +108,14 @@ public class SimulationExecutor {
 						.map(Street::getName)
 						.map(this.firstStepStreetNamesWithNumberOfCars::get)
 						.orElse(0L)))
-				.sorted(Comparator.comparing(Street::getNumberOfPassingCarsInt).reversed())
+				//.sorted(Comparator.comparing(Street::getNumberOfPassingCarsInt).reversed())
 				.map(Street::getName)
 				.forEach(inputStreet -> {
 					final int numberOfPasses = this.streetsByName.get(inputStreet)
 							.getNumberOfPassingCars().get();
 					//final int length = this.streetsByName.get(inputStreet).getLength();
-					final int numberToAssign = ((numberOfPasses*19) / this.highestNumberOfPassingCars) + 1;
-					final int toAssign2 = intersectionOfLongStreets ? numberToAssign * 1 : numberToAssign;
+					final int numberToAssign = ((numberOfPasses*2) / this.highestNumberOfPassingCars) + 1;
+					final int toAssign2 = intersectionOfLongStreets ? numberToAssign * 2 : numberToAssign;
 					//final int numberToAssignByMaxDuration = ((length*3) / this.highestStreetDuration) + 1;
 					System.out.println(toAssign2);
 					intersection.getTrafficLights().add(new TrafficLight(inputStreet, toAssign2));

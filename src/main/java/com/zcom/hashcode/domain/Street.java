@@ -25,4 +25,8 @@ public class Street {
 		this.numberOfPassingCars = new AtomicInteger(0);
 	}
 
+	public int getNumberOfPassingCarsInt() {
+		return this.numberOfPassingCars.get();
+	}
+
 }
